@@ -1,4 +1,4 @@
-# PetRadar API (NestJS + PostGIS)
+# PetRadar API
 
 API REST para registrar mascotas perdidas y encontradas. Al registrar una mascota encontrada, el sistema busca coincidencias dentro de un radio de 500 metros usando `ST_DWithin` y envía correo al dueño de la mascota perdida.
 
@@ -171,6 +171,12 @@ curl -X POST http://localhost:3000/lost-pets \
     "longitude":-101.68
   }'
 ```
+
+
+
+
+
+
 
 ## 8) Notas importantes
 
