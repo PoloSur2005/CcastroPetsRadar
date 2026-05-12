@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { LostPetsModule } from './lost-pets/lost-pets.module';
 import { FoundPetsModule } from './found-pets/found-pets.module';
 import { MailerModule } from './mailer/mailer.module';
+import { RedisModule } from './redis.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { MailerModule } from './mailer/mailer.module';
       synchronize: true,
     }),
     MailerModule,
+    RedisModule,
     LostPetsModule,
     FoundPetsModule,
   ],
