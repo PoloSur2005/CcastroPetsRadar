@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { RedisService } from '../common.redis.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -29,6 +29,8 @@ type CreateLostPetDto = {
 
 @Injectable()
 export class LostPetsService {
+  private readonly logger = new Logger(LostPetsService.name);
+
   constructor(
     @InjectRepository(LostPet)
     private readonly lostPetsRepository: Repository<LostPet>,
@@ -54,17 +56,21 @@ export class LostPetsService {
     });
 
     const saved = await this.lostPetsRepository.save(pet);
-    await this.redisService.del('lost-pets:active');
+    await this.redisService.del('lost-pets');
     return saved;
   }
 
 
   async findActive(): Promise<LostPet[]> {
-    const cacheKey = 'lost-pets:active';
+    const cacheKey = 'lost-pets';
     const cached = await this.redisService.get(cacheKey);
+
     if (cached) {
+      this.logger.log('Cache HIT: lost-pets');
       return JSON.parse(cached) as LostPet[];
     }
+
+    this.logger.log('Cache MISS: lost-pets');
 
     const data = await this.lostPetsRepository.find({
       where: { is_active: true },
