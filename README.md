@@ -183,3 +183,27 @@ curl -X POST http://localhost:3000/lost-pets \
 - No guardes credenciales reales en Git.
 - Usa `.env` local y deja solo `.env.example` en el repo.
 - `synchronize: true` es solo para desarrollo/examen.
+
+
+## 9) Nuevos endpoints GET con caché Redis
+
+- `GET /lost-pets`: lista mascotas perdidas activas (`is_active=true`).
+- `GET /found-pets`: lista mascotas encontradas.
+
+La caché usa Redis con TTL de 60 segundos y se invalida al crear nuevos registros.
+
+## 10) Azure Application Insights
+
+La API inicializa telemetría automáticamente cuando existe la variable:
+
+```env
+APPLICATIONINSIGHTS_CONNECTION_STRING=...
+```
+
+## 11) Docker en producción
+
+El `Dockerfile` usa multi-stage build para generar una imagen optimizada de producción.
+
+## 12) GitHub Actions + GHCR
+
+Se incluye workflow en `.github/workflows/docker-publish.yml` para construir y publicar la imagen a `ghcr.io/<owner>/<repo>`.
