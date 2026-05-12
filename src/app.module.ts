@@ -20,6 +20,7 @@ import { RedisService } from './common.redis.service';
       synchronize: true,
     }),
     MailerModule,
+    RedisModule,
     LostPetsModule,
     FoundPetsModule,
   ],
