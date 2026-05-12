@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { MailerService } from '../mailer/mailer.service';
@@ -32,6 +32,8 @@ type MatchResult = LostPet & { distance: number };
 
 @Injectable()
 export class FoundPetsService {
+  private readonly logger = new Logger(FoundPetsService.name);
+
   constructor(
     @InjectRepository(FoundPet)
     private readonly foundPetsRepository: Repository<FoundPet>,
@@ -72,17 +74,21 @@ export class FoundPetsService {
       }),
     );
 
-    await this.redisService.del('found-pets:all');
+    await this.redisService.del('found-pets');
     return { foundPet, notifiedOwners: matches.length, matches };
   }
 
 
   async findAll(): Promise<FoundPet[]> {
-    const cacheKey = 'found-pets:all';
+    const cacheKey = 'found-pets';
     const cached = await this.redisService.get(cacheKey);
+
     if (cached) {
+      this.logger.log('Cache HIT: found-pets');
       return JSON.parse(cached) as FoundPet[];
     }
+
+    this.logger.log('Cache MISS: found-pets');
 
     const data = await this.foundPetsRepository.find({
       order: { found_date: 'DESC' },
