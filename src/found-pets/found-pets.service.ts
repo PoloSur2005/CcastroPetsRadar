@@ -4,6 +4,7 @@ import { DataSource, Repository } from 'typeorm';
 import { MailerService } from '../mailer/mailer.service';
 import { LostPet } from '../lost-pets/entities/lost-pet.entity';
 import { FoundPet } from './entities/found-pet.entity';
+import { RedisService } from '../common.redis.service';
 
 type CreateFoundPetDto = {
   species: string;
@@ -36,6 +37,7 @@ export class FoundPetsService {
     private readonly foundPetsRepository: Repository<FoundPet>,
     private readonly dataSource: DataSource,
     private readonly mailerService: MailerService,
+    private readonly redisService: RedisService,
   ) {}
 
   async create(createFoundPetDto: CreateFoundPetDto) {
@@ -70,7 +72,24 @@ export class FoundPetsService {
       }),
     );
 
+    await this.redisService.del('found-pets:all');
     return { foundPet, notifiedOwners: matches.length, matches };
+  }
+
+
+  async findAll(): Promise<FoundPet[]> {
+    const cacheKey = 'found-pets:all';
+    const cached = await this.redisService.get(cacheKey);
+    if (cached) {
+      return JSON.parse(cached) as FoundPet[];
+    }
+
+    const data = await this.foundPetsRepository.find({
+      order: { found_date: 'DESC' },
+    });
+
+    await this.redisService.setEx(cacheKey, 60, JSON.stringify(data));
+    return data;
   }
 
   private extractCoordinates(createFoundPetDto: CreateFoundPetDto): [number, number] {

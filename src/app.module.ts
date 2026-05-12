@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { LostPetsModule } from './lost-pets/lost-pets.module';
 import { FoundPetsModule } from './found-pets/found-pets.module';
 import { MailerModule } from './mailer/mailer.module';
+import { RedisService } from './common.redis.service';
 
 @Module({
   imports: [
@@ -23,6 +24,6 @@ import { MailerModule } from './mailer/mailer.module';
     FoundPetsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, RedisService],
 })
 export class AppModule {}
