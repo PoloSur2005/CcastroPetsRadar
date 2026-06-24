@@ -1,0 +1,31 @@
+# terraform.tfvars.example
+# ------------------------------------------------------------------------------
+# PLANTILLA de variables. Cópiala a "terraform.tfvars" y rellena con valores
+# reales. terraform.tfvars está en .gitignore (contiene secretos); este .example
+# SÍ se versiona como guía.
+#
+#   cp terraform.tfvars.example terraform.tfvars
+#
+# ------------------------------------------------------------------------------
+
+# --- Token de DigitalOcean ---
+do_token = "dop_v1_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# --- Infra (opcionales; tienen defaults en variables.tf) ---
+region       = "nyc3"
+droplet_size = "s-1vcpu-1gb"
+
+# --- Acceso SSH ---
+ssh_pub_key_path = "~/.ssh/petradar_do.pub"
+# allowed_ssh_cidr = "TU_IP/32"   # recomendado: restringe SSH solo a tu IP
+
+# --- Repositorio a desplegar (opcionales; ya tienen default) ---
+# repo_url    = "https://github.com/PoloSur2005/CcastroPetsRadar.git"
+# repo_branch = "main"
+
+# --- Secretos de la aplicación ---
+db_password                   = "cambia_esta_contraseña"
+mailer_email                  = "tu_correo@gmail.com"
+mailer_password               = "clave_de_aplicacion_16_chars"
+mapbox_token                  = "pk.tu_token_de_mapbox"
+appinsights_connection_string = ""   # opcional; déjalo vacío para desactivar
